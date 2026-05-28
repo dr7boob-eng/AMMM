@@ -341,27 +341,180 @@
         
         .detail-content {
             flex: 1;
-            padding: 30px 20px;
+            padding: 20px;
             overflow-y: auto;
         }
         
-        .detail-info {
-            background: #2d3e52;
-            padding: 20px;
-            border-radius: 8px;
+        .add-data-btn {
+            background: #4fa3ff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .add-data-btn:hover {
+            background: #3f8cd9;
+        }
+        
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .data-item {
+            background: #2d3e52;
             border: 1px solid #3d4e66;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
         }
         
-        .detail-info h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
+        .data-item-info {
+            flex: 1;
+        }
+        
+        .data-item-name {
+            font-size: 16px;
+            font-weight: 600;
             color: #4fa3ff;
+            margin-bottom: 5px;
         }
         
-        .detail-info p {
-            line-height: 1.6;
-            opacity: 0.9;
+        .data-item-details {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .data-item-details div {
+            margin-bottom: 3px;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.6;
+        }
+        
+        /* Add Data Form Modal */
+        .add-data-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+        
+        .add-data-modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .add-data-form {
+            background: #2d3e52;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #4fa3ff;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #3d4e66;
+            border-radius: 6px;
+            background: #354859;
+            color: white;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4fa3ff;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .form-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .form-btn.save {
+            background: #4fa3ff;
+            color: white;
+        }
+        
+        .form-btn.save:hover {
+            background: #3f8cd9;
+        }
+        
+        .form-btn.cancel {
+            background: #3d4e66;
+            color: #e5e7eb;
+        }
+        
+        .form-btn.cancel:hover {
+            background: #4a5f7f;
         }
     </style>
 </head>
@@ -449,42 +602,141 @@
             <button class="close-btn" onclick="closeSection()">✕</button>
         </div>
         <div class="detail-content">
-            <div class="detail-info">
-                <h3>📋 Overview</h3>
-                <p id="detailContent">This is section content goes here. You can add detailed information about each section here.</p>
+            <button class="add-data-btn" onclick="openAddDataForm()">➕ Add Data</button>
+            <div id="dataList" class="data-list">
+                <div class="empty-state">No data yet. Click "Add Data" to get started!</div>
             </div>
-            <div class="detail-info">
-                <h3>📚 References</h3>
-                <p id="referenceCount">Loading references...</p>
-            </div>
+        </div>
+    </div>
+    
+    <!-- Add Data Form Modal -->
+    <div id="addDataModal" class="add-data-modal">
+        <div class="add-data-form">
+            <div class="modal-header">Add New Data</div>
+            <form onsubmit="saveData(event)">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="amm1">AMM 1</label>
+                    <input type="text" id="amm1" required>
+                </div>
+                <div class="form-group">
+                    <label for="amm2">AMM 2</label>
+                    <input type="text" id="amm2" required>
+                </div>
+                <div class="form-group">
+                    <label for="pn">P/N</label>
+                    <input type="text" id="pn" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="form-btn cancel" onclick="closeAddDataForm()">Cancel</button>
+                    <button type="submit" class="form-btn save">Save</button>
+                </div>
+            </form>
         </div>
     </div>
     
     <script>
         const ADMIN_PASSWORD = "ZZ5577";
+        let currentSection = null;
         
         const sectionData = {
-            321: {
-                title: "Section 321",
-                content: "This is the main reference section for code 321. It contains important information and best practices for implementation.",
-                references: 3
-            },
-            330: {
-                title: "Section 330",
-                content: "This section covers reference code 330 with detailed guidelines and specifications for proper usage.",
-                references: 3
-            },
-            777: {
-                title: "Section 777",
-                content: "Section 777 contains critical information and reference materials for advanced implementations.",
-                references: 2
-            },
-            999: {
-                title: "Section 999",
-                content: "This comprehensive section includes extensive documentation and reference materials for section 999.",
-                references: 5
-            }
+            321: { title: "Section 321" },
+            330: { title: "Section 330" },
+            777: { title: "Section 777" },
+            999: { title: "Section 999" }
         };
+        
+        // Initialize localStorage
+        function initializeData() {
+            if (!localStorage.getItem('ammData')) {
+                const defaultData = {
+                    321: [],
+                    330: [],
+                    777: [],
+                    999: []
+                };
+                localStorage.setItem('ammData', JSON.stringify(defaultData));
+            }
+        }
+        
+        // Get all data
+        function getAllData() {
+            return JSON.parse(localStorage.getItem('ammData') || '{}');
+        }
+        
+        // Get section data
+        function getSectionData(sectionId) {
+            const allData = getAllData();
+            return allData[sectionId] || [];
+        }
+        
+        // Save data to localStorage
+        function saveDataToStorage(sectionId, dataArray) {
+            const allData = getAllData();
+            allData[sectionId] = dataArray;
+            localStorage.setItem('ammData', JSON.stringify(allData));
+        }
+        
+        // Add new data
+        function addData(sectionId, data) {
+            const sectionData = getSectionData(sectionId);
+            sectionData.push({
+                id: Date.now(),
+                name: data.name,
+                amm1: data.amm1,
+                amm2: data.amm2,
+                pn: data.pn
+            });
+            saveDataToStorage(sectionId, sectionData);
+        }
+        
+        // Delete data
+        function deleteData(sectionId, dataId) {
+            let sectionData = getSectionData(sectionId);
+            sectionData = sectionData.filter(item => item.id !== dataId);
+            saveDataToStorage(sectionId, sectionData);
+            displaySectionData(sectionId);
+        }
+        
+        // Display section data
+        function displaySectionData(sectionId) {
+            const dataList = document.getElementById('dataList');
+            const sectionDataArray = getSectionData(sectionId);
+            
+            if (sectionDataArray.length === 0) {
+                dataList.innerHTML = '<div class="empty-state">No data yet. Click "Add Data" to get started!</div>';
+                return;
+            }
+            
+            dataList.innerHTML = sectionDataArray.map(item => `
+                <div class="data-item">
+                    <div class="data-item-info">
+                        <div class="data-item-name">${escapeHtml(item.name)}</div>
+                        <div class="data-item-details">
+                            <div><strong>AMM 1:</strong> ${escapeHtml(item.amm1)}</div>
+                            <div><strong>AMM 2:</strong> ${escapeHtml(item.amm2)}</div>
+                            <div><strong>P/N:</strong> ${escapeHtml(item.pn)}</div>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteData(${sectionId}, ${item.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
         
         function openAdminPanel() {
             document.getElementById("adminModal").classList.add("show");
@@ -506,7 +758,6 @@
             if (password === ADMIN_PASSWORD) {
                 alert("✅ Admin access granted! Welcome to the Admin Panel.");
                 closeAdminPanel();
-                // Here you can add logic to navigate to admin panel page
             } else {
                 document.getElementById("errorMessage").classList.add("show");
                 document.getElementById("passwordInput").classList.add("error");
@@ -521,30 +772,71 @@
         }
         
         function openSection(sectionId) {
+            currentSection = sectionId;
             const data = sectionData[sectionId];
             document.getElementById("detailTitle").textContent = data.title;
-            document.getElementById("detailContent").textContent = data.content;
-            document.getElementById("referenceCount").textContent = `${data.references} references available`;
             document.getElementById("sectionDetail").classList.add("show");
+            displaySectionData(sectionId);
         }
         
         function closeSection() {
             document.getElementById("sectionDetail").classList.remove("show");
+            currentSection = null;
         }
         
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById("adminModal");
-            if (event.target === modal) {
-                closeAdminPanel();
+        function openAddDataForm() {
+            document.getElementById("addDataModal").classList.add("show");
+            document.getElementById("name").focus();
+        }
+        
+        function closeAddDataForm() {
+            document.getElementById("addDataModal").classList.remove("show");
+            document.getElementById("name").value = "";
+            document.getElementById("amm1").value = "";
+            document.getElementById("amm2").value = "";
+            document.getElementById("pn").value = "";
+        }
+        
+        function saveData(event) {
+            event.preventDefault();
+            
+            const data = {
+                name: document.getElementById("name").value,
+                amm1: document.getElementById("amm1").value,
+                amm2: document.getElementById("amm2").value,
+                pn: document.getElementById("pn").value
+            };
+            
+            if (currentSection) {
+                addData(currentSection, data);
+                closeAddDataForm();
+                displaySectionData(currentSection);
             }
         }
         
-        // Close detail view when clicking outside of it
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const adminModal = document.getElementById("adminModal");
+            const addDataModal = document.getElementById("addDataModal");
+            
+            if (event.target === adminModal) {
+                closeAdminPanel();
+            }
+            if (event.target === addDataModal) {
+                closeAddDataForm();
+            }
+        }
+        
+        // Close detail view when clicking outside
         document.getElementById("sectionDetail").addEventListener("click", function(event) {
             if (event.target === this) {
                 closeSection();
             }
+        });
+        
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            initializeData();
         });
     </script>
 </body>
