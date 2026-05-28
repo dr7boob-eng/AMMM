@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const XLSX = require('xlsx');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 const PORT = 3000;
@@ -10,6 +11,7 @@ const PORT = 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 app.use(express.static('public'));
 
 // Database file path
@@ -22,7 +24,7 @@ if (!fs.existsSync(dbPath)) {
         321: [],
         330: [],
         777: [],
-        999: []
+        787: []
     };
     fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
 }
@@ -181,7 +183,7 @@ app.post('/api/import/excel', (req, res) => {
                     321: [],
                     330: [],
                     777: [],
-                    999: []
+                    787: []
                 };
 
                 // Process each sheet
